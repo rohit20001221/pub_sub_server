@@ -71,7 +71,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'pub_sub_server.wsgi.application'
-ASHI_APPLICATION = 'pub_sub_server.asgi.application'
+ASGI_APPLICATION = 'pub_sub_server.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
