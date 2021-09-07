@@ -48,10 +48,11 @@ class MqttBrokerConsumer(AsyncJsonWebsocketConsumer):
                     }
                 }
             )
+            await self.update_topic_message(data['publish']['topic'], data['publish']['message'])
     
     async def publish_message(self, event):
         await self.send_json(event['message'])
-        await self.update_topic_message(event['message']['topic'], event['message']['message'])    
+            
     
     # this function is called when websocket connection is closed
     async def disconnect(self, code):
