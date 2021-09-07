@@ -1,7 +1,20 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-import json
+from channels.db import database_sync_to_async
+from .models import TopicMessage
 
 class MqttBrokerConsumer(AsyncJsonWebsocketConsumer):
+    
+    @database_sync_to_async
+    def update_topic_message(self, topic, message):
+        if TopicMessage.objects.filter(topic=topic).exists():
+            t = TopicMessage.objects.get(topic=topic)
+            t.message = message
+            t.save()
+        else:
+            TopicMessage.objects.create(
+                topic=topic,
+                message=message
+            )
     
     # this method is called when websocket connection is created
     async def connect(self):
@@ -37,7 +50,8 @@ class MqttBrokerConsumer(AsyncJsonWebsocketConsumer):
             )
     
     async def publish_message(self, event):
-        await self.send_json(event['message'])    
+        await self.send_json(event['message'])
+        await self.update_topic_message(event['message']['topic'], event['message']['message'])    
     
     # this function is called when websocket connection is closed
     async def disconnect(self, code):
